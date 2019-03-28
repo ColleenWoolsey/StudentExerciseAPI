@@ -70,7 +70,7 @@ namespace StudentExerciseAPI.Controllers
 
         // CODE FOR GETTING A SINGLE EXERCISES
 
-        [HttpGet("{id}", Name = "GetExercise")]
+        [HttpGet("{id}", Name = "GetOneExercise")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             using (SqlConnection conn = Connection)

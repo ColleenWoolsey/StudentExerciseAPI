@@ -17,8 +17,8 @@ namespace StudentExerciseAPI.Models
         // [\b(Evening | Day)\b.]
         public string CohortName { get; set; }
 
-        public List<Student> ListofStudents { get; set; }
+        public List<Student> ListofStudents { get; set; } = new List<Student>();
 
-        public List<Instructor> ListofInstructors { get; set; }
+        public List<Instructor> ListofInstructors { get; set; } = new List<Instructor>();
     }
 }

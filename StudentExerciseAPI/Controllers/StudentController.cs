@@ -71,7 +71,7 @@ namespace StudentExerciseAPI.Controllers
                                             s.StudentSlackHandle,
                                             s.CohortId,
                                             c.[CohortName] as CohortName,
-                                            e.id as ExerciseId,
+                                            e.Id as ExerciseId,
                                             e.[Exercisename] as ExerciseName,
                                             e.[Language]
                                     FROM student s
@@ -185,13 +185,14 @@ namespace StudentExerciseAPI.Controllers
                                                s.StudentSlackHandle,
                                                s.CohortId,
                                                c.[CohortName] as CohortName,
-                                               e.id as ExerciseId,
+                                               e.Id as ExerciseId,
                                                e.[Exercisename] as ExerciseName,
                                                e.[Language]
                                         FROM student s
                                             LEFT JOIN Cohort c ON s.CohortId = c.Id
                                             LEFT JOIN ExerciseIntersection ei ON s.Id = ei.studentId
-                                            LEFT JOIN Exercise e ON ei.ExerciseId = e.Id";                                        
+                                            LEFT JOIN Exercise e ON ei.ExerciseId = e.Id
+                                            WHERE s.Id = @id";                                       
                     }
                     else
                     {
@@ -202,17 +203,14 @@ namespace StudentExerciseAPI.Controllers
                                                         s.CohortId,
                                                         c.[CohortName] as CohortName
                                                 FROM Student s
-                                                LEFT JOIN Cohort c on s.CohortId = c.Id";                                               
+                                                INNER JOIN Cohort c on s.CohortId = c.Id
+                                                WHERE s.Id = @id";                        
                     }
-
-                    cmd.CommandText += " WHERE Id = id";
-
                     cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
 
                     // Adding cmd.Parameter for id here is the difference between get all and get single object
                     // Andy used scalar instead of reader ????
-
-                    SqlDataReader reader = cmd.ExecuteReader();
 
                     Student student = null;
 
