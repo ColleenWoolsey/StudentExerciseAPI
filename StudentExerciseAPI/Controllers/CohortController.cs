@@ -1,13 +1,4 @@
-﻿/* e.id as ExerciseId,
-e.[Exercisename] as ExerciseName,
-e.[Language]
-from student s
-left join Cohort c on s.CohortId = c.id
-left join StudentCohort se on s.id = se.studentid
-left join Exercise e on se.cohortid = e.id"; */
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,12 +39,14 @@ namespace StudentExerciseAPI.Controllers
 
         // CODE FOR GETTING A LIST OF COHORTS
 
+
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
+
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT
@@ -68,7 +61,7 @@ namespace StudentExerciseAPI.Controllers
                                            i.InstructorLastName
                                        FROM student s
                                        left join Cohort c on s.CohortId = c.id
-                                       left join Instructor i on c.id = i.CohortId;";
+                                       left join Instructor i on c.id = i.CohortId";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -77,14 +70,14 @@ namespace StudentExerciseAPI.Controllers
                     {
                         int CohortId = reader.GetInt32(reader.GetOrdinal("CohortId"));
                         if (!cohorts.ContainsKey(CohortId))
-                        {                           
-                        Cohort newCohort = new Cohort
                         {
-                            Id = CohortId,
-                            CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
-                            ListofStudents = new List<Student>(),
-                            ListofInstructors = new List<Instructor>()
-                        };
+                            Cohort newCohort = new Cohort
+                            {
+                                Id = CohortId,
+                                CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
+                                ListofStudents = new List<Student>(),
+                                ListofInstructors = new List<Instructor>()
+                            };
 
                             cohorts.Add(CohortId, newCohort);
                         }
@@ -118,7 +111,7 @@ namespace StudentExerciseAPI.Controllers
                     }
                     reader.Close();
                     return Ok(cohorts);
-                   // return cohorts.Values.ToList();
+                    // return cohorts.Values.ToList();
                 }
             }
         }
@@ -126,7 +119,7 @@ namespace StudentExerciseAPI.Controllers
         // CODE FOR GETTING A SINGLE COHORT
 
         [HttpGet("{id}", Name = "GetCohort")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        public IActionResult Get([FromRoute] int id)
         {
             using (SqlConnection conn = Connection)
             {
