@@ -46,7 +46,6 @@ namespace StudentExerciseAPI.Controllers
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
-
                 {
                     cmd.CommandText = @"SELECT i.Id as InstructorId,
                                                i.InstructorFirstName,
@@ -56,7 +55,7 @@ namespace StudentExerciseAPI.Controllers
                                                c.[CohortName] as CohortName                                               
                                                
                                           FROM Instructor i
-                                          LEFT JOIN Cohort c ON i.CohortId = c.id";
+                                          INNER JOIN Cohort c ON i.CohortId = c.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -82,15 +81,22 @@ namespace StudentExerciseAPI.Controllers
                         instructors.Add(newInstructor);
                     }
                     reader.Close();
-
-                    return Ok(instructors);
+                    if (instructors.Count == 0)
+                    {
+                        return NoContent();
+                    }
+                    else
+                    {
+                        return Ok(instructors);
+                    }
                 }
             }
         }
+ 
 
         // CODE FOR GETTING A SINGLE ITEM
 
-        [HttpGet("{id}", Name = "GetInstructor")]
+        [HttpGet("{id}", Name = "GetOneInstructor")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             using (SqlConnection conn = Connection)
@@ -98,16 +104,19 @@ namespace StudentExerciseAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id,
-                                               InstructorFirstName,
-                                               InstructorLastname,
-                                               InstructorSlackHandle,
-                                               CohortId
-                                        FROM Instructor
-                                        WHERE Id = @id";
+                    cmd.CommandText = @"SELECT i.Id,
+                                                        i.InstructorFirstName,
+                                                        i.InstructorLastName,
+                                                        i.InstructorSlackHandle,
+                                                        i.CohortId,
+                                                        c.[CohortName] as CohortName
+                                                FROM Instructor i
+                                                LEFT JOIN Cohort c on i.CohortId = c.Id
+                                                WHERE i.Id = @id";
+
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
-
+                    
                     Instructor Instructor = null;
 
                     if (reader.Read())
@@ -118,12 +127,17 @@ namespace StudentExerciseAPI.Controllers
                             InstructorFirstName = reader.GetString(reader.GetOrdinal("InstructorFirstName")),
                             InstructorLastName = reader.GetString(reader.GetOrdinal("InstructorLastName")),
                             InstructorSlackHandle = reader.GetString(reader.GetOrdinal("InstructorSlackHandle")),
-                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId"))
+                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
+                            Cohort = new Cohort
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
+                                CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                            }
                         };
                     }
                     reader.Close();
 
-                    return Ok(Instructor);
+                    return base.Ok(Instructor);
                 }
             }
         }

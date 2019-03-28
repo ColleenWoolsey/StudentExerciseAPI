@@ -25,18 +25,18 @@ namespace StudentExerciseAPI.Controllers
         public SqlConnection Connection
         {
             get
-                // First have to add connection in appsettings.json
-                // "AllowedHosts": "*",
-                // "ConnectionStrings": {
-                // "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=StudentExercisesDB;Trusted_Connection=True;"
-                // }
-  
+            // First have to add connection in appsettings.json
+            // "AllowedHosts": "*",
+            // "ConnectionStrings": {
+            // "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=StudentExercisesDB;Trusted_Connection=True;"
+            // }
+
             {
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
 
-// CODE FOR GETTING A LIST OF EXERCISES
+        // CODE FOR GETTING A LIST OF EXERCISES
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -68,9 +68,9 @@ namespace StudentExerciseAPI.Controllers
             }
         }
 
-// CODE FOR GETTING A SINGLE EXERCISES
+        // CODE FOR GETTING A SINGLE EXERCISES
 
-        [HttpGet("{id}", Name = "GetExercise")]
+        [HttpGet("{id}", Name = "GetOneExercise")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             using (SqlConnection conn = Connection)
@@ -103,7 +103,7 @@ namespace StudentExerciseAPI.Controllers
             }
         }
 
-// CODE FOR CREATING AN EXERCISES
+        // CODE FOR CREATING AN EXERCISES
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Exercise exercise)
@@ -128,7 +128,7 @@ namespace StudentExerciseAPI.Controllers
             }
         }
 
-// CODE FOR EDITING/UPDATING AN EXERCISES
+        // CODE FOR EDITING/UPDATING AN EXERCISES
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Exercise exercise)
@@ -170,7 +170,7 @@ namespace StudentExerciseAPI.Controllers
             }
         }
 
-// CODE FOR DELETING AN EXERCISES
+        // CODE FOR DELETING AN EXERCISES
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
